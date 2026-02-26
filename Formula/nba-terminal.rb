@@ -4,8 +4,8 @@
 class NbaTerminal < Formula
   desc "TUI to follow NBA games, standings, and box scores in the terminal"
   homepage "https://github.com/douglasdamasio/nba-terminal"
-  url "https://github.com/douglasdamasio/nba-terminal/archive/refs/tags/v1.0.0.tar.gz"
-  sha256 "0bd4f7eea2038ec438b155624fc11209e94b7912810c21b9a21cbcd5bd9238b2"
+  url "https://github.com/douglasdamasio/nba-terminal/archive/refs/tags/v1.0.1.tar.gz"
+  sha256 "553b1645d837eed5f576975288027b691e71242ff1660c7de3b3452b265c61aa"
   license "MIT"
   head "https://github.com/douglasdamasio/nba-terminal.git", branch: "main"
 

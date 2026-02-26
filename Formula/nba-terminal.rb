@@ -10,29 +10,27 @@ class NbaTerminal < Formula
   head "https://github.com/douglasdamasio/nba-terminal.git", branch: "main"
 
   depends_on "python@3.12"
-  depends_on "rust" => :build
 
   def install
     python = Formula["python@3.12"].opt_bin/"python3.12"
 
-    # Create virtualenv in libexec
     system python, "-m", "venv", libexec
-
-    # Copy app source so PYTHONPATH can find it
     (libexec/"app").install Dir[buildpath/"*"]
+    system libexec/"bin/pip", "install", "-r", libexec/"app/requirements.txt"
 
-    # Install dependencies. Build pydantic_core from source to avoid Homebrew
-    # "Failed to fix install linkage" on the pre-built wheel's .so (header too small).
-    system libexec/"bin/pip", "install", "--no-binary", "pydantic_core",
-           "-r", libexec/"app/requirements.txt"
-
-    # Wrapper script
     (bin/"nba-terminal").write <<~EOS
       #!/bin/bash
       export PYTHONPATH="#{libexec}/app"
       exec "#{libexec}/bin/python" -m src.main "$@"
     EOS
     chmod 0755, bin/"nba-terminal"
+  end
+
+  def caveats
+    <<~EOS
+      If you see "Failed to fix install linkage" for pydantic_core, you can ignore it.
+      Run `nba-terminal --help` to confirm the app works.
+    EOS
   end
 
   test do

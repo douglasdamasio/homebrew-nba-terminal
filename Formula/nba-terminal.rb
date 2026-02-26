@@ -2,8 +2,6 @@
 # frozen_string_literal: true
 
 class NbaTerminal < Formula
-  include Language::Python::Virtualenv::Formula
-
   desc "TUI to follow NBA games, standings, and box scores in the terminal"
   homepage "https://github.com/douglasdamasio/nba-terminal"
   url "https://github.com/douglasdamasio/nba-terminal/archive/refs/tags/v1.0.0.tar.gz"
@@ -14,14 +12,18 @@ class NbaTerminal < Formula
   depends_on "python@3.12"
 
   def install
-    # Copy app source into libexec/app so PYTHONPATH can find it
+    python = Formula["python@3.12"].opt_bin/"python3.12"
+
+    # Create virtualenv in libexec
+    system python, "-m", "venv", libexec
+
+    # Copy app source so PYTHONPATH can find it
     (libexec/"app").install Dir[buildpath/"*"]
 
-    # Create virtualenv and install dependencies
-    virtualenv_create(libexec, "python3.12")
+    # Install dependencies
     system libexec/"bin/pip", "install", "-r", libexec/"app/requirements.txt"
 
-    # Wrapper script: set PYTHONPATH and run the app
+    # Wrapper script
     (bin/"nba-terminal").write <<~EOS
       #!/bin/bash
       export PYTHONPATH="#{libexec}/app"

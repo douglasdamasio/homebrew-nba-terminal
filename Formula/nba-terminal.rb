@@ -10,6 +10,7 @@ class NbaTerminal < Formula
   head "https://github.com/douglasdamasio/nba-terminal.git", branch: "main"
 
   depends_on "python@3.12"
+  depends_on "rust" => :build
 
   def install
     python = Formula["python@3.12"].opt_bin/"python3.12"
@@ -20,8 +21,10 @@ class NbaTerminal < Formula
     # Copy app source so PYTHONPATH can find it
     (libexec/"app").install Dir[buildpath/"*"]
 
-    # Install dependencies
-    system libexec/"bin/pip", "install", "-r", libexec/"app/requirements.txt"
+    # Install dependencies. Build pydantic_core from source to avoid Homebrew
+    # "Failed to fix install linkage" on the pre-built wheel's .so (header too small).
+    system libexec/"bin/pip", "install", "--no-binary", "pydantic_core",
+           "-r", libexec/"app/requirements.txt"
 
     # Wrapper script
     (bin/"nba-terminal").write <<~EOS
@@ -36,4 +39,3 @@ class NbaTerminal < Formula
     assert_match "Usage:", shell_output("#{bin}/nba-terminal --help", 0)
   end
 end
-

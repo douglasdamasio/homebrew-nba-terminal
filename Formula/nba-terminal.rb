@@ -21,7 +21,7 @@ class NbaTerminal < Formula
     (bin/"nba-terminal").write <<~EOS
       #!/bin/bash
       export PYTHONPATH="#{libexec}/app"
-      exec "#{libexec}/bin/python" -m src.main "$@"
+      cd "#{libexec}/app" && exec "#{libexec}/bin/python" -m src.main "$@"
     EOS
     chmod 0755, bin/"nba-terminal"
   end
